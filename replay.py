@@ -21,3 +21,13 @@ if rawpath.endswith('jsonl.gz'):
           else:
                print("Error:ambientTemp not available in this update")
 
+#Logic to handle normal jsonlines file.
+elif rawpath.endswith('jsonl'):
+     with json_lines.open(rawpath) as path:
+          for obj in path:
+               if "ambientTemp" in obj["update"] and commandsplit[2] in obj["updateTime"]:
+                    ambientTemp = obj["update"]["ambientTemp"]
+                    print(ambientTemp)
+                    break
+          else:
+               print("Error: ambientTemp not available in this update")
