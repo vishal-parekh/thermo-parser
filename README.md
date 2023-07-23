@@ -1,52 +1,46 @@
 # EnergyHub Coding Sample
 
-[replay.py](./replay.py) is a script to parse information from a file of thermostat data.
+[replay.py](./replay.py) is a script to parse information from a json lines file consisting of thermostat data.
 
-## Installation
+## Install Dependencies
+### Install Python (3.11.4 or later)
+- [Official Python Download Link](https://www.python.org/downloads/)
 
-Install in this order:
+### Install Poetry
+- [How to install Poetry](https://python-poetry.org/docs/#installation)
 
 ```bash
-#Install Python (3.8.2 or later)
-https://www.python.org/downloads/ (Install based on user OS)
-
-#Install pip (python package manager)
-
-python get-pip.py (Mac)
-
-or
-
-py get-pip.py (Windows)
-
-#Install essential json related library
-pip install json-lines
+#Install Dependencies from pyproject.toml
+poetry install
 ```
 
-## Run Script
+## Commands to run for normal or gzipped json lines file type:
 
-While in Energy Coding Assignment root directory
+### In root of thermo-parser directory:
 ```bash
-python replay.py
+#Return ambientTemp from json lines files using updateTime
+$ python replay.py thermostat-data.jsonl 2016-01-09T01:25:00.002797
+
+and 
+
+#Return ambientTemp from gzipped json lines files using updateTime
+$ python replay.py thermostat-data.jsonl.gz 2016-01-09T01:25:00.002797
+
+Expected output: 74
 ```
-
-## Sample Command
-
-Returns ambientTemp: 82 based on updateTime passed in command
-```bash
-#normal json lines file
-$ ./replay Enter command: ambientTemp thermostat-data.jsonl 2016-01-09T01:25:00.002797
-
-or
-
-#gzipped json lines file
-$ ./replay Enter command: ambientTemp thermostat-data.jsonl.gz 2016-01-09T01:25:00.002797
-
-82
-```
-### Sample Error Response for unavailable ambientTemp for incorrect updateTime
+### Error Response for non-existent ambientTemp:
 
 ```bash
-$ ./replay Enter command: ambientTemp thermostat-data.jsonl 2016-01-09T01:25:00.111111
+$ python replay.py thermostat-data.jsonl 2016-01-09T01:25:00.111111
 
-Error: ambientTemp not available in this update
+An error occured: updateTime does not exist
+Traceback (most recent call last):
+  File "//src/thermo-parser/replay.py", line 46, in <module>
+    print(find_ambient_temp(sys.argv[1:]))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/src/thermo-parser/replay.py", line 42, in find_ambient_temp
+    raise e
+  File "/src/thermo-parser/replay.py", line 39, in find_ambient_temp
+    raise Exception("updateTime does not exist")
+Exception: updateTime does not exist
 ```
